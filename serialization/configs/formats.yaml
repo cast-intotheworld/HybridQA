@@ -1,0 +1,58 @@
+# Serialization format definitions
+# Each format defines a serializer class and its parameters
+
+formats:
+  json:
+    class: "JSONSerializer"
+    description: "Structured JSON preserving original table/passage hierarchy"
+    params:
+      indent: 2
+      include_metadata: true
+
+  row_wise:
+    class: "RowWiseSerializer"
+    description: "Flattened row-wise text representation"
+    params:
+      row_separator: "\n"
+      cell_separator: " | "
+      include_header: true
+
+  col_wise:
+    class: "ColWiseSerializer"
+    description: "Flattened column-wise text representation"
+    params:
+      col_separator: "\n"
+      value_separator: ", "
+      include_header: true
+
+  markdown:
+    class: "MarkdownHTMLSerializer"
+    description: "Markdown table with linked passages"
+    params:
+      table_format: "markdown"  # "markdown" or "html"
+      passage_format: "paragraph"
+
+  interleaved:
+    class: "InterleavedSerializer"
+    description: "Table rows interleaved with relevant passages"
+    params:
+      interleave_strategy: "row"  # "row" or "cell"
+      passage_placement: "after_row"
+
+  relation_explicit:
+    class: "RelationExplicitSerializer"
+    description: "Explicit relation triples (subject, predicate, object)"
+    params:
+      triple_format: "natural"  # "natural" or "tuple"
+      include_passage_relations: true
+
+  compressed:
+    class: "CompressedSerializer"
+    description: "Token-minimized compressed representation"
+    params:
+      abbreviate_headers: true
+      omit_empty_cells: true
+      separator: ";"
+
+# Default format for quick testing
+default_format: "json"

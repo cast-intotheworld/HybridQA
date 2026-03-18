@@ -1,0 +1,12 @@
+# Core dependencies
+pyyaml>=6.0
+tiktoken>=0.5.0
+tqdm>=4.60.0
+
+# LLM API clients (for inference stage)
+openai>=1.0.0
+anthropic>=0.20.0
+
+# Dev dependencies
+pytest>=7.0.0
+ruff>=0.1.0

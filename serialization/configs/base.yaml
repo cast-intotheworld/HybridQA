@@ -1,0 +1,40 @@
+# Base configuration for HybridQA serialization pipeline
+# Paths are relative to the HybridQA root directory (parent of serialization/)
+
+paths:
+  # HybridQA released data (JSON files)
+  hybridqa_data: "../released_data"
+
+  # WikiTables-WithLinks repository
+  # Install: cd /Users/casthood/codes/working/HybridQA && git clone https://github.com/wenhuchen/WikiTables-WithLinks
+  wikitables: "../WikiTables-WithLinks"
+
+  # Output directory for serialized data, predictions, and results
+  output_dir: "outputs"
+
+# Data splits to process
+splits:
+  - train
+  - dev
+  - test
+
+# File mapping per split
+# traced versions include answer-node annotations
+files:
+  train: "train.traced.json"
+  dev: "dev.traced.json"
+  test: "test.json"  # test split has no traced version
+
+# Reference file for evaluation
+reference:
+  dev: "dev_reference.json"
+
+# Sampling configuration
+sampling:
+  # Number of samples to use (null = use all)
+  dev_sample_size: null
+  train_sample_size: null
+  test_sample_size: null
+
+  # Random seed for reproducibility
+  random_seed: 42

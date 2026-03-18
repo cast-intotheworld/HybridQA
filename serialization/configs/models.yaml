@@ -1,0 +1,51 @@
+# LLM model configurations for Stage 4 (cross-model comparison)
+# Each model defines provider, name, and inference parameters
+
+models:
+  gpt4o:
+    provider: "openai"
+    name: "gpt-4o"
+    params:
+      temperature: 0.0
+      max_tokens: 256
+      top_p: 1.0
+
+  gpt4o_mini:
+    provider: "openai"
+    name: "gpt-4o-mini"
+    params:
+      temperature: 0.0
+      max_tokens: 256
+      top_p: 1.0
+
+  claude_sonnet:
+    provider: "anthropic"
+    name: "claude-sonnet-4-5-20250929"
+    params:
+      temperature: 0.0
+      max_tokens: 256
+
+  claude_haiku:
+    provider: "anthropic"
+    name: "claude-haiku-4-5-20251001"
+    params:
+      temperature: 0.0
+      max_tokens: 256
+
+# Inference settings
+inference:
+  # Batch size for API calls
+  batch_size: 10
+
+  # Rate limiting (requests per minute)
+  rate_limit_rpm: 60
+
+  # Retry configuration
+  max_retries: 3
+  retry_delay_seconds: 5
+
+  # Resume from checkpoint
+  enable_checkpointing: true
+
+# Default model for quick testing
+default_model: "gpt4o_mini"
