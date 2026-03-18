@@ -333,3 +333,27 @@
   - list_formats() returns all 7 registered formats
   - All 61 tests pass in 0.07s
   - Evidence preservation verified across all 7 formats
+
+ 원본 HybridQA 모델 (2020년, 작은 모델 시대):
+  질문 → linking(TF-IDF/string match) → 관련 행/패시지 필터링 → 셀 선택 → 정답 추출                
+  작은 모델은 전체 테이블+패시지를 한번에 처리할 수 없어서 linking으로 범위를 좁히는 것이          
+  필수였습니다.                                                                                    
+                                                                                                   
+  우리 프로젝트 (2026년, LLM 시대):                                                                
+  질문 + 전체 테이블+패시지(직렬화) → LLM → 정답
+  GPT-4o, Claude 같은 LLM은 긴 컨텍스트를 직접 처리하므로 linking 없이 end-to-end로 답을 찾습니다.
+
+  이게 의미 있는 이유:
+
+  1. 같은 데이터셋, 같은 평가지표 (EM/F1) — HybridQA 벤치마크 위에서 비교 가능
+  2. 연구 초점이 다름 — 원본은 "어떤 모델 아키텍처가 좋은가", 우리는 "같은 LLM에 어떤 포맷으로
+  주느냐가 성능에 영향을 주는가"
+  3. 최근 연구 트렌드와 일치 — 2024~2025 테이블 QA 논문들도 대부분 linking 없이 LLM에 직접 입력하는
+   방식
+
+  다만 고려할 점이 하나 있습니다: 테이블에 연결된 패시지가 수십 개일 경우 토큰 한도를 초과할 수
+  있습니다. 이건 linking이 아니라 토큰 예산 관리 차원에서 나중에 처리하면 됩니다 (예: 패시지
+  truncation, 요약 등).
+
+  결론적으로, preprocessing.py의 linking 과정은 우리 파이프라인에서 불필요하고, 이는 연구 설계상
+  의도된 것입니다.

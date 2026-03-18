@@ -1,5 +1,6 @@
 # Serialization outputs (large generated files)
 serialization/outputs/
+!serialization/outputs/logs/
 
 # Python
 __pycache__/

@@ -1,0 +1,27 @@
+2026-03-18 11:44:30,333 - __main__ - INFO - Logging to: /data1/home/casthood/codes/HybridQA/serialization/outputs/logs/preprocess_dev_20260318_114430.log
+2026-03-18 11:44:30,336 - __main__ - INFO - ================================================================================
+2026-03-18 11:44:30,336 - __main__ - INFO - HybridQA Preprocessing Pipeline
+2026-03-18 11:44:30,336 - __main__ - INFO - Split: dev
+2026-03-18 11:44:30,337 - __main__ - INFO - ================================================================================
+2026-03-18 11:44:30,337 - __main__ - INFO - ✓ WikiTables-WithLinks found at /data1/home/casthood/codes/HybridQA/WikiTables-WithLinks
+2026-03-18 11:44:30,413 - __main__ - INFO -   - tables_tok: 15316 files
+2026-03-18 11:44:30,413 - __main__ - INFO -   - request_tok: 15316 files
+2026-03-18 11:44:30,413 - __main__ - INFO - 
+Loading questions from /data1/home/casthood/codes/HybridQA/released_data...
+2026-03-18 11:44:30,458 - __main__ - INFO - ✓ Loaded 3466 questions, 3053 unique tables (0.04s)
+2026-03-18 11:44:30,460 - __main__ - INFO -   - Questions with answer_text: 3466
+2026-03-18 11:44:30,460 - __main__ - INFO -   - Questions with answer_nodes: 3374
+2026-03-18 11:44:30,460 - __main__ - INFO - 
+Loading sample tables...
+2026-03-18 11:44:30,470 - __main__ - INFO - ✓ Loaded 5 sample tables (0.01s, 1.9ms/table)
+2026-03-18 11:44:30,470 - __main__ - INFO -   - Avg table size: 17.8 rows x 5.4 cols
+2026-03-18 11:44:30,470 - __main__ - INFO -   - Avg passages per table: 38.2
+2026-03-18 11:44:30,470 - __main__ - INFO - 
+Cache statistics:
+2026-03-18 11:44:30,470 - __main__ - INFO -   - Table cache: CacheInfo(hits=0, misses=5, maxsize=2048, currsize=5)
+2026-03-18 11:44:30,470 - __main__ - INFO -   - Passage cache: CacheInfo(hits=0, misses=5, maxsize=2048, currsize=5)
+2026-03-18 11:44:30,470 - __main__ - INFO - 
+================================================================================
+2026-03-18 11:44:30,470 - __main__ - INFO - ✓ Preprocessing complete
+2026-03-18 11:44:30,470 - __main__ - INFO - ================================================================================
+2026-03-18 11:44:30,470 - __main__ - INFO - Full log saved to: /data1/home/casthood/codes/HybridQA/serialization/outputs/logs/preprocess_dev_20260318_114430.log
