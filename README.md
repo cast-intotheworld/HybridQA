@@ -1,47 +1,47 @@
 # HybridQA + Input Serialization Research
 
-**How Input Serialization Shapes Hybrid Table–Text QA** (EMNLP 2026 목표)
+**How Input Serialization Shapes Hybrid Table–Text QA** (Targeting EMNLP 2026)
 
-이 저장소는 [HybridQA 데이터셋](https://hybridqa.github.io/)을 기반으로 **테이블+텍스트 하이브리드 데이터의 직렬화 포맷**이 LLM의 QA 성능에 미치는 영향을 연구하는 프로젝트입니다.
+This repository extends the [HybridQA dataset](https://hybridqa.github.io/) with a **serialization pipeline** to study how different input representations of hybrid table-text data affect LLM question answering performance.
 
 > **Original HybridQA Paper**: [Chen et al. (EMNLP 2020)](https://arxiv.org/pdf/2004.07347.pdf)
 > **Original Repository**: [wenhuchen/HybridQA](https://github.com/wenhuchen/HybridQA)
-> **Original README**: [README_HYBRIDQA.md](README_HYBRIDQA.md) ← 원본 HybridQA 사용법
+> **Original README**: [README_HYBRIDQA.md](README_HYBRIDQA.md)
 
 ---
 
-## 🔬 Research Overview
+## Research Overview
 
 ### Research Questions
 
-1. **RQ1**: 직렬화 포맷에 따라 LLM의 QA 정확도(EM/F1)가 얼마나 달라지는가?
-2. **RQ2**: 토큰 효율성(정보 밀도)과 QA 성능 사이의 트레이드오프는?
-3. **RQ3**: 테이블 기반 vs 패시지 기반 질문에서 포맷별 성능 차이는?
+1. **RQ1**: How much does the choice of serialization format affect LLM QA accuracy (EM/F1)?
+2. **RQ2**: What is the trade-off between token efficiency (information density) and QA performance?
+3. **RQ3**: How do format-specific performance gaps differ between table-based and passage-based questions?
 
 ### 7 Serialization Formats
 
 | # | Format | Description |
 |---|--------|-------------|
-| 1 | **Structured JSON** | 원본 구조를 JSON으로 표현 |
-| 2 | **Row-wise text** | 행 단위 플랫 텍스트 |
-| 3 | **Column-wise text** | 열 단위 플랫 텍스트 |
-| 4 | **Markdown table** | Markdown/HTML 테이블 표기 |
-| 5 | **Interleaved** | 테이블과 패시지를 인터리빙 |
-| 6 | **Relation-explicit** | 관계를 명시적 트리플로 표현 |
-| 7 | **Compressed** | 토큰 최소화 압축 포맷 |
+| 1 | **Structured JSON** | Preserves original table/passage hierarchy as JSON |
+| 2 | **Row-wise text** | Flattened text, one row per line |
+| 3 | **Column-wise text** | Flattened text, one column per line |
+| 4 | **Markdown table** | Markdown/HTML table rendering |
+| 5 | **Interleaved** | Table rows interleaved with relevant passages |
+| 6 | **Relation-explicit** | Explicit (subject, predicate, object) triples |
+| 7 | **Compressed** | Token-minimized compact representation |
 
 ### Experiment Stages
 
-1. **Stage 1**: Baseline (Structured JSON + zero-shot QA)
-2. **Stage 2**: Format Comparison (7개 포맷 비교)
-3. **Stage 3**: Perturbation (행/열 재배열, 구분자 변경, 디스트랙터)
-4. **Stage 4**: Cross-model (GPT-4o, Claude Sonnet, Gemini 등)
-5. **Stage 5**: Breakdown Analysis (테이블/패시지, hop 수, 크기별)
-6. **Stage 6**: Ablation (포맷 구성요소별 기여도)
+1. **Stage 1**: Baseline — Structured JSON + zero-shot QA
+2. **Stage 2**: Format Comparison — All 7 formats
+3. **Stage 3**: Perturbation — Row/column reorder, separator swap, distractors
+4. **Stage 4**: Cross-model — GPT-4o, Claude Sonnet, Gemini, etc.
+5. **Stage 5**: Breakdown Analysis — By answer source, hop count, table size
+6. **Stage 6**: Ablation — Component-level contribution analysis
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Setup
 
@@ -74,7 +74,7 @@ python serialization/scripts/run_preprocess.py --split dev
 # Serialize with all formats
 python serialization/scripts/run_serialize.py --format all --split dev
 
-# Serialize with specific format
+# Serialize with a specific format
 python serialization/scripts/run_serialize.py --format json --split dev
 ```
 
@@ -88,57 +88,57 @@ python serialization/scripts/run_evaluate.py predictions.jsonl
 python serialization/scripts/run_evaluate.py --compare
 ```
 
-**자세한 사용법**: [serialization/README.md](serialization/README.md)
+**Detailed usage guide**: [serialization/README.md](serialization/README.md)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 HybridQA/
-├── released_data/           # HybridQA 원본 데이터 (70K+ QA pairs)
-├── WikiTables-WithLinks/    # 테이블 + 패시지 원본 (별도 clone 필요)
-├── serialization/           # ✨ 직렬화 파이프라인 (신규 추가)
-│   ├── configs/             # YAML 설정 (경로, 포맷, 모델)
+├── released_data/           # Original HybridQA data (70K+ QA pairs)
+├── WikiTables-WithLinks/    # Table + passage source (clone separately)
+├── serialization/           # Serialization pipeline (new)
+│   ├── configs/             # YAML configs (paths, formats, models)
 │   ├── src/
-│   │   ├── data_loader/     # HybridQA + WikiTables 데이터 로드
-│   │   ├── serializers/     # 7개 직렬화 포맷 구현
-│   │   ├── evaluation/      # EM/F1, 토큰 카운트, evidence 검증
-│   │   ├── perturbation/    # Stage 3 변형 실험
-│   │   └── inference/       # LLM 추론 (구현 예정)
-│   ├── scripts/             # CLI 실행 스크립트
-│   ├── tests/               # pytest 테스트 (61개, 모두 통과)
-│   └── README.md            # 📖 상세 사용 가이드
-├── CLAUDE.md                # Claude Code용 프로젝트 문서
-├── .claude/skills/          # 전처리/직렬화/평가/검증 스킬
-├── plan.md                  # 구현 계획 문서
-├── README_HYBRIDQA.md       # 원본 HybridQA README
-└── (원본 HybridQA 학습 코드)
+│   │   ├── data_loader/     # HybridQA + WikiTables data loaders
+│   │   ├── serializers/     # 7 serialization format implementations
+│   │   ├── evaluation/      # EM/F1, token counting, evidence checking
+│   │   ├── perturbation/    # Stage 3 perturbation experiments
+│   │   └── inference/       # LLM inference (coming soon)
+│   ├── scripts/             # CLI runner scripts
+│   ├── tests/               # pytest tests (61 tests, all passing)
+│   └── README.md            # Detailed usage guide
+├── CLAUDE.md                # Claude Code project documentation
+├── .claude/skills/          # Dev workflow skills
+├── plan.md                  # Implementation plan
+├── README_HYBRIDQA.md       # Original HybridQA README
+└── (original HybridQA training code)
 ```
 
 ---
 
-## 🧪 Development Status
+## Development Status
 
-### ✅ Completed
-- [x] 7개 직렬화 포맷 구현
-- [x] HybridQA + WikiTables 데이터 로더 (LRU 캐시)
-- [x] EM/F1 평가 메트릭 (원본 evaluate_script.py와 동일 로직)
-- [x] Evidence 보존 검증 (교차 포맷 검증)
-- [x] 토큰 카운터 (tiktoken)
-- [x] Perturbation 모듈 (행/열 재배열, 구분자 변경 등)
-- [x] 61개 pytest 테스트 (100% 통과)
-- [x] Claude Code 스킬 6개 (/preprocess, /serialize, /evaluate, /validate, /debug, /test)
+### Completed
+- [x] 7 serialization formats with ABC + Registry pattern
+- [x] HybridQA + WikiTables data loaders with LRU caching
+- [x] EM/F1 evaluation metrics (identical logic to original evaluate_script.py)
+- [x] Evidence preservation checker (cross-format validation)
+- [x] Token counter (tiktoken-based)
+- [x] Perturbation modules (row/col reorder, separator swap, distractors)
+- [x] 61 pytest tests (100% passing)
+- [x] Claude Code skills (/preprocess, /serialize, /evaluate, /validate, /debug, /test)
 
-### 🚧 In Progress
-- [ ] LLM 추론 파이프라인 (inference/)
-- [ ] 프롬프트 빌더
-- [ ] OpenAI/Anthropic API 클라이언트
-- [ ] 배치 추론 + rate limiting
+### In Progress
+- [ ] LLM inference pipeline (inference/)
+- [ ] Prompt builder
+- [ ] OpenAI / Anthropic API clients
+- [ ] Batch inference with rate limiting and checkpointing
 
 ---
 
-## 📊 Dataset
+## Dataset
 
 **HybridQA**: Multi-hop QA over tabular and textual data
 - **Questions**: 70,259 (train: 62,682 / dev: 3,466 / test: 4,111)
@@ -158,38 +158,36 @@ HybridQA/
 
 ---
 
-## 🛠️ Testing
+## Testing
 
 ```bash
 cd HybridQA
 pytest serialization/tests/ -v
 ```
 
-- `test_loaders.py`: 데이터 로더 (10 tests)
-- `test_serializers.py`: 7개 포맷 + evidence 보존 (31 tests)
-- `test_metrics.py`: EM/F1 메트릭 (17 tests)
-- `test_evidence.py`: 교차 포맷 검증 (3 tests)
+- `test_loaders.py`: Data loaders (10 tests)
+- `test_serializers.py`: 7 formats + evidence preservation (31 tests)
+- `test_metrics.py`: EM/F1 metrics (17 tests)
+- `test_evidence.py`: Cross-format validation (3 tests)
 
-**Total**: 61 tests passed in 0.07s ✅
-
----
-
-## 📚 Documentation
-
-- **[serialization/README.md](serialization/README.md)**: 상세 사용 가이드
-- **[CLAUDE.md](CLAUDE.md)**: Claude Code용 프로젝트 문서 (아키텍처, 코딩 스타일, 데이터 플로우)
-- **[README_HYBRIDQA.md](README_HYBRIDQA.md)**: 원본 HybridQA 사용법
+**Total**: 61 tests passed in 0.07s
 
 ---
 
-## 🤝 Contributing
+## Documentation
 
-이 프로젝트는 연구 목적으로 개발되었습니다. 원본 HybridQA 데이터셋과 코드베이스를 기반으로 직렬화 실험 기능을 추가했습니다.
-
-**Original HybridQA Authors**: Wenhu Chen, Hanwen Zha, Zhiyu Chen, Wenhan Xiong, Hong Wang, William Wang (UCSB)
+- **[serialization/README.md](serialization/README.md)**: Detailed setup and usage guide
+- **[CLAUDE.md](CLAUDE.md)**: Claude Code project documentation (architecture, coding style, data flow)
+- **[README_HYBRIDQA.md](README_HYBRIDQA.md)**: Original HybridQA usage instructions
 
 ---
 
-## 📄 License
+## Acknowledgements
 
-원본 HybridQA 라이선스를 따릅니다.
+This project builds upon the HybridQA dataset and codebase by Wenhu Chen, Hanwen Zha, Zhiyu Chen, Wenhan Xiong, Hong Wang, and William Wang (UCSB).
+
+---
+
+## License
+
+Follows the original HybridQA license.
