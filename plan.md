@@ -357,3 +357,59 @@
 
   결론적으로, preprocessing.py의 linking 과정은 우리 파이프라인에서 불필요하고, 이는 연구 설계상
   의도된 것입니다.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────
+⏺ 직렬화 출력 데이터 점검 (2026-03-18, Mac 전송 후)
+────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+검사 대상: serialization/outputs/serialized/serialized/{format}/dev/data.jsonl (7개 포맷)
+
+1. 기본 수량 검증 ✅
+   - 7개 포맷 모두 3,466줄 (= dev split 전체 질문 수)
+   - 모든 포맷이 동일한 question_id 집합을 동일한 순서로 포함
+   - 중복 question_id 없음 (3,466 unique)
+
+2. JSONL 스키마 검증 ✅
+   - 모든 엔트리의 키: ["question_id", "format", "serialized_text", "token_count"]
+   - question_id: 올바른 hex string (예: "00153f694413a536")
+   - format: 각 파일의 포맷명과 일치
+   - serialized_text: 빈 값 0건 (7개 포맷 전부)
+   - token_count: 양의 정수
+
+3. 포맷별 토큰 통계 ✅
+   ┌────────────────────┬────────┬───────┬────────┬─────────────┐
+   │ Format             │  Avg   │  Min  │   Max  │    Total    │
+   ├────────────────────┼────────┼───────┼────────┼─────────────┤
+   │ json               │ 8,423  │ 1,066 │ 46,570 │ 29,193,691  │
+   │ row_wise           │ 7,098  │   740 │ 41,508 │ 24,601,086  │
+   │ col_wise           │ 6,855  │   652 │ 40,932 │ 23,760,698  │
+   │ markdown           │ 6,956  │   672 │ 41,346 │ 24,107,804  │
+   │ interleaved        │ 9,659  │   920 │ 69,164 │ 33,479,591  │
+   │ relation_explicit  │ 7,233  │   744 │ 41,993 │ 25,069,169  │
+   │ compressed         │ 7,152  │   727 │ 41,759 │ 24,790,338  │
+   └────────────────────┴────────┴───────┴────────┴─────────────┘
+   - 예상대로 col_wise가 가장 적고, interleaved가 가장 많음 (패시지 인라인 포함)
+   - json은 JSON 구문 오버헤드로 두 번째로 높음
+
+4. 포맷별 내용 구조 확인 ✅
+   - json: 올바른 JSON 구조 (table.columns, table.rows, passages 섹션)
+   - row_wise: "Row N: Key: Value | Key: Value ..." 형식
+   - col_wise: "ColumnName: val1, val2, val3, ..." 형식
+   - markdown: 정상 Markdown 테이블 (| Header | ... | --- | 형식)
+   - interleaved: 행마다 관련 패시지를 [wiki_title]: passage 형태로 인라인 삽입 확인
+   - relation_explicit: "Rank — Column — Value" 트리플 형식
+   - compressed: "H:abbr;abbr;..." 헤더 + "R0:key=val;key=val;..." 축약 형식
+
+5. 전처리 로그 확인 ✅ (preprocess_dev_20260318_114430.log)
+   - WikiTables-WithLinks: 15,316 테이블 파일 존재 확인
+   - 로드된 질문: 3,466개, 고유 테이블: 3,053개
+   - answer_text 보유: 3,466/3,466 (100%)
+   - answer_nodes 보유: 3,374/3,466 (97.3%) — 92개 누락은 원본 데이터 특성
+   - 샘플 테이블 평균: 17.8행 × 5.4열, 테이블당 평균 38.2개 패시지
+
+6. 누락 필드 참고 ⚠️
+   - JSONL에 question, answer_text, table_id 필드 미포함
+   - 현재 구조는 serialized_text만 포함하며, 평가 시 별도 reference 파일 필요
+   - inference 단계에서 question을 prompt에 포함시키는 것은 inference/ 모듈 구현 시 처리 예정
+
+결론: 7개 포맷 × 3,466 질문 = 24,262 엔트리 전부 정상. 직렬화 파이프라인 동작 확인 완료.
