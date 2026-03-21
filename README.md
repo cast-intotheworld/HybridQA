@@ -18,22 +18,21 @@ This repository extends the [HybridQA dataset](https://hybridqa.github.io/) with
 2. **RQ2**: What is the trade-off between token efficiency (information density) and QA performance?
 3. **RQ3**: How do format-specific performance gaps differ between table-based and passage-based questions?
 
-### 7 Serialization Formats
+### 6 Serialization Formats
 
 | # | Format | Description |
 |---|--------|-------------|
 | 1 | **Structured JSON** | Preserves original table/passage hierarchy as JSON |
-| 2 | **Row-wise text** | Flattened text, one row per line |
-| 3 | **Column-wise text** | Flattened text, one column per line |
-| 4 | **Markdown table** | Markdown/HTML table rendering |
-| 5 | **Interleaved** | Table rows interleaved with relevant passages |
-| 6 | **Relation-explicit** | Explicit (subject, predicate, object) triples |
-| 7 | **Compressed** | Token-minimized compact representation |
+| 2 | **YAML** | Preserves original table/passage hierarchy as YAML |
+| 3 | **Markdown table** | Markdown table rendering with passages |
+| 4 | **HTML table** | HTML table rendering with passages |
+| 5 | **LaTeX table** | LaTeX tabular environment with passages |
+| 6 | **CSV** | RFC 4180 CSV with passages appended |
 
 ### Experiment Stages
 
 1. **Stage 1**: Baseline — Structured JSON + zero-shot QA
-2. **Stage 2**: Format Comparison — All 7 formats
+2. **Stage 2**: Format Comparison — All 6 formats
 3. **Stage 3**: Perturbation — Row/column reorder, separator swap, distractors
 4. **Stage 4**: Cross-model — GPT-4o, Claude Sonnet, Gemini, etc.
 5. **Stage 5**: Breakdown Analysis — By answer source, hop count, table size
@@ -102,7 +101,7 @@ HybridQA/
 │   ├── configs/             # YAML configs (paths, formats, models)
 │   ├── src/
 │   │   ├── data_loader/     # HybridQA + WikiTables data loaders
-│   │   ├── serializers/     # 7 serialization format implementations
+│   │   ├── serializers/     # 6 serialization format implementations
 │   │   ├── evaluation/      # EM/F1, token counting, evidence checking
 │   │   ├── perturbation/    # Stage 3 perturbation experiments
 │   │   └── inference/       # LLM inference (coming soon)
@@ -121,7 +120,7 @@ HybridQA/
 ## Development Status
 
 ### Completed
-- [x] 7 serialization formats with ABC + Registry pattern
+- [x] 6 standard serialization formats (JSON, YAML, Markdown, HTML, LaTeX, CSV) with ABC + Registry pattern
 - [x] HybridQA + WikiTables data loaders with LRU caching
 - [x] EM/F1 evaluation metrics (identical logic to original evaluate_script.py)
 - [x] Evidence preservation checker (cross-format validation)
@@ -166,7 +165,7 @@ pytest serialization/tests/ -v
 ```
 
 - `test_loaders.py`: Data loaders (10 tests)
-- `test_serializers.py`: 7 formats + evidence preservation (31 tests)
+- `test_serializers.py`: 6 formats + evidence preservation
 - `test_metrics.py`: EM/F1 metrics (17 tests)
 - `test_evidence.py`: Cross-format validation (3 tests)
 

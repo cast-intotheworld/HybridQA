@@ -12,12 +12,12 @@ from serialization.src.serializers.registry import get_serializer
 
 # Import all serializers
 import serialization.src.serializers.json_format  # noqa: F401
-import serialization.src.serializers.row_wise  # noqa: F401
-import serialization.src.serializers.col_wise  # noqa: F401
-import serialization.src.serializers.markdown_html  # noqa: F401
-import serialization.src.serializers.interleaved  # noqa: F401
-import serialization.src.serializers.relation_explicit  # noqa: F401
-import serialization.src.serializers.compressed  # noqa: F401
+import serialization.src.serializers.markdown  # noqa: F401
+import serialization.src.serializers.html  # noqa: F401
+import serialization.src.serializers.latex  # noqa: F401
+import serialization.src.serializers.csv_format  # noqa: F401
+import serialization.src.serializers.xml_format  # noqa: F401
+import serialization.src.serializers.yaml_format  # noqa: F401
 
 
 class TestEvidenceChecker:
@@ -44,7 +44,7 @@ class TestEvidenceChecker:
         """All formats should have the same evidence set."""
         serializers = [
             get_serializer("json"),
-            get_serializer("row_wise"),
+            get_serializer("html"),
             get_serializer("markdown"),
         ]
         results = cross_format_check(sample_evidence, serializers)

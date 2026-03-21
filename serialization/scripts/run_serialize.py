@@ -21,12 +21,12 @@ from serialization.src.serializers.registry import get_serializer, list_formats
 
 # Import all serializer modules to trigger registration
 import serialization.src.serializers.json_format  # noqa: F401
-import serialization.src.serializers.row_wise  # noqa: F401
-import serialization.src.serializers.col_wise  # noqa: F401
-import serialization.src.serializers.markdown_html  # noqa: F401
-import serialization.src.serializers.interleaved  # noqa: F401
-import serialization.src.serializers.relation_explicit  # noqa: F401
-import serialization.src.serializers.compressed  # noqa: F401
+import serialization.src.serializers.markdown  # noqa: F401
+import serialization.src.serializers.html  # noqa: F401
+import serialization.src.serializers.latex  # noqa: F401
+import serialization.src.serializers.csv_format  # noqa: F401
+import serialization.src.serializers.xml_format  # noqa: F401
+import serialization.src.serializers.yaml_format  # noqa: F401
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)

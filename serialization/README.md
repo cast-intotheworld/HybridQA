@@ -2,7 +2,7 @@
 
 **How Input Serialization Shapes Hybrid Table–Text QA** 연구를 위한 직렬화 파이프라인입니다.
 
-HybridQA 데이터셋의 테이블+텍스트 데이터를 7가지 포맷으로 변환하고, LLM 추론 및 평가까지 이어지는 실험 코드베이스입니다.
+HybridQA 데이터셋의 테이블+텍스트 데이터를 6가지 표준 포맷(JSON, YAML, Markdown, HTML, LaTeX, CSV)으로 변환하고, LLM 추론 및 평가까지 이어지는 실험 코드베이스입니다.
 
 ---
 
@@ -147,8 +147,11 @@ python serialization/scripts/run_serialize.py --format all --split dev
 
 ```bash
 python serialization/scripts/run_serialize.py --format json --split dev
-python serialization/scripts/run_serialize.py --format row_wise --split dev
+python serialization/scripts/run_serialize.py --format yaml --split dev
 python serialization/scripts/run_serialize.py --format markdown --split dev
+python serialization/scripts/run_serialize.py --format html --split dev
+python serialization/scripts/run_serialize.py --format latex --split dev
+python serialization/scripts/run_serialize.py --format csv --split dev
 ```
 
 ### 샘플링 (빠른 테스트)
@@ -198,17 +201,16 @@ pytest serialization/tests/test_evidence.py -v      # evidence 보존
 
 ---
 
-## 사용 가능한 7가지 직렬화 포맷
+## 사용 가능한 6가지 직렬화 포맷
 
 | 포맷 | 명령어 옵션 | 설명 |
 |------|------------|------|
 | Structured JSON | `--format json` | 원본 구조를 JSON으로 표현 |
-| Row-wise text | `--format row_wise` | 행 단위 플랫 텍스트 |
-| Column-wise text | `--format col_wise` | 열 단위 플랫 텍스트 |
-| Markdown table | `--format markdown` | Markdown/HTML 테이블 표기 |
-| Interleaved | `--format interleaved` | 테이블과 패시지를 인터리빙 |
-| Relation-explicit | `--format relation_explicit` | 관계를 명시적으로 표현 |
-| Compressed | `--format compressed` | 토큰 최소화 압축 포맷 |
+| YAML | `--format yaml` | 원본 구조를 YAML로 표현 |
+| Markdown table | `--format markdown` | Markdown 테이블 표기 |
+| HTML table | `--format html` | HTML 테이블 표기 |
+| LaTeX table | `--format latex` | LaTeX tabular 환경 |
+| CSV | `--format csv` | RFC 4180 CSV 포맷 |
 
 ---
 
@@ -218,12 +220,12 @@ pytest serialization/tests/test_evidence.py -v      # evidence 보존
 serialization/
 ├── configs/
 │   ├── base.yaml           # 경로, split, 샘플링 설정
-│   ├── formats.yaml        # 7개 직렬화 포맷 정의
+│   ├── formats.yaml        # 6개 직렬화 포맷 정의
 │   └── models.yaml         # LLM 모델 설정
 ├── src/
 │   ├── types.py            # 커스텀 타입 별칭
 │   ├── data_loader/        # HybridQA + WikiTables 데이터 로드
-│   ├── serializers/        # 7개 직렬화 포맷 구현
+│   ├── serializers/        # 6개 직렬화 포맷 구현
 │   ├── evaluation/         # EM/F1, 토큰 카운트, evidence 검증
 │   ├── perturbation/       # Stage 3 변형 실험
 │   └── inference/          # LLM 추론 (이후 구현)

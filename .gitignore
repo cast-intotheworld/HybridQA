@@ -2,6 +2,9 @@
 serialization/outputs/
 !serialization/outputs/logs/
 
+# PDF files
+*.pdf
+
 # Python
 __pycache__/
 *.py[cod]

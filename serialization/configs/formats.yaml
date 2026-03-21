@@ -9,50 +9,44 @@ formats:
       indent: 2
       include_metadata: true
 
-  row_wise:
-    class: "RowWiseSerializer"
-    description: "Flattened row-wise text representation"
+  yaml:
+    class: "YAMLSerializer"
+    description: "YAML preserving original table/passage hierarchy"
     params:
-      row_separator: "\n"
-      cell_separator: " | "
-      include_header: true
+      default_flow_style: false
+      include_metadata: true
 
-  col_wise:
-    class: "ColWiseSerializer"
-    description: "Flattened column-wise text representation"
+  xml:
+    class: "XMLSerializer"
+    description: "XML preserving original table/passage hierarchy"
     params:
-      col_separator: "\n"
-      value_separator: ", "
-      include_header: true
+      indent: 2
+      include_metadata: true
 
   markdown:
-    class: "MarkdownHTMLSerializer"
+    class: "MarkdownSerializer"
     description: "Markdown table with linked passages"
     params:
-      table_format: "markdown"  # "markdown" or "html"
       passage_format: "paragraph"
 
-  interleaved:
-    class: "InterleavedSerializer"
-    description: "Table rows interleaved with relevant passages"
+  html:
+    class: "HTMLSerializer"
+    description: "HTML table with linked passages"
     params:
-      interleave_strategy: "row"  # "row" or "cell"
-      passage_placement: "after_row"
+      passage_format: "paragraph"
 
-  relation_explicit:
-    class: "RelationExplicitSerializer"
-    description: "Explicit relation triples (subject, predicate, object)"
+  latex:
+    class: "LaTeXSerializer"
+    description: "LaTeX tabular environment with passages"
     params:
-      triple_format: "natural"  # "natural" or "tuple"
-      include_passage_relations: true
+      col_spec: ""  # empty = auto ("l" * num_cols)
 
-  compressed:
-    class: "CompressedSerializer"
-    description: "Token-minimized compressed representation"
+  csv:
+    class: "CSVSerializer"
+    description: "CSV (RFC 4180) with passages appended as plain text"
     params:
-      abbreviate_headers: true
-      omit_empty_cells: true
-      separator: ";"
+      delimiter: ","
+      include_title: true
 
 # Default format for quick testing
 default_format: "json"

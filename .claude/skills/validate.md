@@ -38,7 +38,7 @@
 
 ```
 [PASS] json: 100/100 samples — all evidence preserved
-[PASS] Cross-format: json vs row_wise — evidence sets match
-[FAIL] Cross-format: json vs compressed — 3 samples with missing cell values
-  - question_id: abc123 — missing: "Walter Payton" in compressed output
+[PASS] Cross-format: json vs html — evidence sets match
+[FAIL] Cross-format: json vs latex — 3 samples with missing cell values
+  - question_id: abc123 — missing: "Walter Payton" in latex output
 ```

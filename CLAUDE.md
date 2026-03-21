@@ -8,7 +8,7 @@
 
 **How Input Serialization Shapes Hybrid Table–Text QA** (EMNLP 2026 목표)
 
-HybridQA 데이터셋(70K+ QA pairs)에서 테이블+텍스트 하이브리드 데이터를 7가지 직렬화 포맷으로 변환하여 LLM에 입력했을 때, 포맷 선택이 QA 성능에 미치는 영향을 분석하는 연구입니다.
+HybridQA 데이터셋(70K+ QA pairs)에서 테이블+텍스트 하이브리드 데이터를 6가지 표준 직렬화 포맷으로 변환하여 LLM에 입력했을 때, 포맷 선택이 QA 성능에 미치는 영향을 분석하는 연구입니다.
 
 ### Research Questions
 
@@ -16,22 +16,21 @@ HybridQA 데이터셋(70K+ QA pairs)에서 테이블+텍스트 하이브리드 �
 2. **RQ2**: 토큰 효율성(정보 밀도)과 QA 성능 사이의 트레이드오프는 어떠한가?
 3. **RQ3**: 테이블 기반 질문 vs 패시지 기반 질문에서 포맷별 성능 차이는?
 
-### 7 Serialization Formats
+### 6 Serialization Formats
 
 | # | Format | Description |
 |---|--------|-------------|
 | 1 | Structured JSON | 원본 구조를 JSON으로 표현 |
-| 2 | Row-wise text | 행 단위 플랫 텍스트 |
-| 3 | Column-wise text | 열 단위 플랫 텍스트 |
-| 4 | Markdown/HTML table | Markdown 또는 HTML 테이블 표기 |
-| 5 | Interleaved table-text | 테이블과 패시지를 인터리빙 |
-| 6 | Relation-explicit | 관계를 명시적으로 표현 |
-| 7 | Compressed | 토큰 최소화 압축 포맷 |
+| 2 | YAML | 원본 구조를 YAML로 표현 |
+| 3 | Markdown table | Markdown 테이블 표기 |
+| 4 | HTML table | HTML 테이블 표기 |
+| 5 | LaTeX table | LaTeX tabular 환경 |
+| 6 | CSV | RFC 4180 CSV 포맷 |
 
 ### 6 Experiment Stages
 
 1. **Stage 1**: Baseline — Structured JSON 직렬화 + zero-shot QA
-2. **Stage 2**: Format Comparison — 7개 포맷 비교
+2. **Stage 2**: Format Comparison — 6개 포맷 비교
 3. **Stage 3**: Perturbation — 행/열 재배열, 구분자 변경, 디스트랙터 삽입
 4. **Stage 4**: Cross-model — GPT-4o, Claude, Gemini 등 모델 간 비교
 5. **Stage 5**: Breakdown Analysis — 테이블/패시지 유형, hop 수, 테이블 크기별 분석
@@ -121,7 +120,7 @@ serialization/
 ├── src/
 │   ├── types.py       # 커스텀 타입 별칭
 │   ├── data_loader/   # HybridQA + WikiTables 데이터 로드
-│   ├── serializers/   # 7개 직렬화 포맷 (ABC + Registry)
+│   ├── serializers/   # 6개 직렬화 포맷 (ABC + Registry)
 │   ├── inference/     # LLM 추론 (이후 구현)
 │   ├── evaluation/    # EM/F1 메트릭, 토큰 카운트, evidence 검증
 │   └── perturbation/  # Stage 3 변형 실험
@@ -142,12 +141,11 @@ serialization/
 | `src/serializers/base.py` | `BaseSerializer` ABC (serialize + format_name) |
 | `src/serializers/registry.py` | `@register` 데코레이터 + `get_serializer()` |
 | `src/serializers/json_format.py` | Format 1: Structured JSON |
-| `src/serializers/row_wise.py` | Format 2: Flattened row-wise text |
-| `src/serializers/col_wise.py` | Format 3: Flattened column-wise text |
-| `src/serializers/markdown_html.py` | Format 4: Markdown/HTML table |
-| `src/serializers/interleaved.py` | Format 5: Interleaved table-text |
-| `src/serializers/relation_explicit.py` | Format 6: Relation-explicit |
-| `src/serializers/compressed.py` | Format 7: Compressed format |
+| `src/serializers/yaml_format.py` | Format 2: YAML |
+| `src/serializers/markdown.py` | Format 3: Markdown table |
+| `src/serializers/html.py` | Format 4: HTML table |
+| `src/serializers/latex.py` | Format 5: LaTeX tabular |
+| `src/serializers/csv_format.py` | Format 6: CSV (RFC 4180) |
 | `src/evaluation/metrics.py` | EM/F1 (evaluate_script.py에서 포팅) |
 | `src/evaluation/token_counter.py` | tiktoken 기반 토큰 카운트 |
 | `src/evaluation/evidence_checker.py` | 포맷 간 evidence 동일성 검증 |
@@ -245,7 +243,7 @@ released_data/*.json          WikiTables-WithLinks/
                     ↓
             Evidence dataclass
                     ↓
-         serializers/ (7 formats)
+         serializers/ (6 formats)
                     ↓
            serialized text (str)
                     ↓
@@ -273,7 +271,7 @@ paths:
 
 ### `configs/formats.yaml`
 
-7개 직렬화 포맷 정의 + 포맷별 파라미터.
+6개 직렬화 포맷 정의 + 포맷별 파라미터.
 
 ### `configs/models.yaml`
 

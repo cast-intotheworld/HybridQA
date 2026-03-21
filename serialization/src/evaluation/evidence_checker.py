@@ -10,6 +10,35 @@ from serialization.src.serializers.base import BaseSerializer
 
 logger = logging.getLogger(__name__)
 
+# LaTeX escape replacements for normalization (escaped -> original)
+_LATEX_UNESCAPE: list[tuple[str, str]] = [
+    ("\\textbackslash{}", "\\"),
+    ("\\textasciitilde{}", "~"),
+    ("\\textasciicircum{}", "^"),
+    ("\\&", "&"),
+    ("\\%", "%"),
+    ("\\$", "$"),
+    ("\\#", "#"),
+    ("\\_", "_"),
+    ("\\{", "{"),
+    ("\\}", "}"),
+]
+
+
+def _normalize_for_check(text: str) -> str:
+    """Normalize serialized text for evidence checking.
+
+    Reverses LaTeX escaping and other format-specific transformations
+    so that plain-text evidence strings can be found in the output.
+
+    :param text: Serialized text that may contain LaTeX escapes.
+    :return: Normalized text with escapes reversed.
+    """
+    result = text
+    for escaped, original in _LATEX_UNESCAPE:
+        result = result.replace(escaped, original)
+    return result
+
 
 @dataclass
 class CheckResult:
@@ -42,21 +71,24 @@ def check_evidence_preservation(
     missing_cells: list[str] = []
     missing_passages: list[str] = []
 
+    # Normalize text to handle LaTeX escapes and other format-specific transforms
+    normalized_text = _normalize_for_check(serialized_text)
+
     # Check all cell texts from header and data
     for cell_text, _ in evidence.table.header:
-        if cell_text.strip() and cell_text.strip() not in serialized_text:
+        if cell_text.strip() and cell_text.strip() not in normalized_text:
             missing_cells.append(cell_text.strip())
 
     for row in evidence.table.data:
         for cell_text, _ in row:
-            if cell_text.strip() and cell_text.strip() not in serialized_text:
+            if cell_text.strip() and cell_text.strip() not in normalized_text:
                 missing_cells.append(cell_text.strip())
 
     # Check passage texts (only those linked from the table)
     table_links = evidence.table.get_all_links()
     for url, passage_text in evidence.passages.items():
         if url in table_links and passage_text.strip():
-            if passage_text.strip() not in serialized_text:
+            if passage_text.strip() not in normalized_text:
                 missing_passages.append(f"{url}: {passage_text[:80]}...")
 
     passed = len(missing_cells) == 0 and len(missing_passages) == 0
